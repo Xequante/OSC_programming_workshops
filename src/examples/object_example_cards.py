@@ -3,6 +3,7 @@ Examples of creating objects with custom attributes and methods
 """
 
 
+from numpy.random import permutation
 from enum import Enum
 
 
@@ -29,6 +30,10 @@ class Suit(Enum):
 
 
 class Card:
+    """
+    This will be a standard card from a 52 card deck, which has both a suit a
+    number associated with it
+    """
 
     def __init__(self, suit: Suit, number: int):
         """
@@ -80,3 +85,50 @@ class Card:
 
         # return the string
         return f'{num_string} of {suit_string}'
+
+
+class Deck:
+    """
+    This will be a collection of all the cards in a 52 card deck, which
+    can be shuffled and have cards removed/added
+    """
+
+    def __init__(self):
+        """
+        Initialize a deck with all 52 cards
+        """
+
+        # Initialize an empty list of cards
+        self.cards = []
+
+        # Add the cards one by one
+        for suit in [Suit.SPADES, Suit.HEARTS, Suit.DIAMONDS, Suit.CLUBS]:
+            for num in range(1, 14):
+                self.cards.append(Card(suit, num))
+
+    def count(self):
+        """
+        Gets a count of the number of cards currently in the deck
+        """
+
+        return len(self.cards)
+
+    def shuffle(self):
+        """
+        Rearranges the list of cards
+        """
+
+        # Use the NumPy permutation command
+        self.cards = permutation(self.cards)
+
+    def deal_cards(self, n=1):
+        """
+        Deals out n cards, and removes these from the deck
+        """
+
+        if n > self.count():
+            raise SyntaxError('Cannot deal more cards than '
+                              'there are currently in the deck')
+        yield self.cards[:n]
+        self.cards = self.cards[n:]
+
